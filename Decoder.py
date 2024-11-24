@@ -93,7 +93,8 @@ def ensambladorAbinario(instruccionEnsamblador):
         'SUB': '100010',
         'AND': '100100',
         'OR': '100101',
-        'SLT': '101010'
+        'SLT': '101010',
+        'NOR': '100111'  # Agregar la instrucción NOR
     }
     # Operaciones para tipo I
     operaciones_tipo_i = {
@@ -124,7 +125,8 @@ def ensambladorAbinario(instruccionEnsamblador):
         rd = registros[partes[1]]
         shamt = "00000"  # Desplazamiento (no usado en estas operaciones)
         funct = operaciones_tipo_r[operacion]
-        return f"{opcode}{rs}{rt}{rd}{shamt}{funct}"
+        instruccion = f"{opcode}{rs}{rt}{rd}{shamt}{funct}"
+        return dividir_en_8_bits(instruccion)
 
     # Decodificación tipo I (ADDI, SUBI, ORI, ANDI, SLTI)
     elif operacion in operaciones_tipo_i and operacion not in ["LW", "SW"]:
@@ -132,7 +134,8 @@ def ensambladorAbinario(instruccionEnsamblador):
         rt = registros[partes[1]]
         rs = registros[partes[2]]
         imm = f"{int(partes[3]):016b}"  # Inmediato de 16 bits
-        return f"{opcode}{rs}{rt}{imm}"
+        instruccion = f"{opcode}{rs}{rt}{imm}"
+        return dividir_en_8_bits(instruccion)
 
     # Decodificación tipo I (LW, SW con offset(base))
     elif operacion in ["LW", "SW"]:
@@ -141,7 +144,8 @@ def ensambladorAbinario(instruccionEnsamblador):
         offset, base = partes[2].split('(')  # Separar offset y base
         rs = registros[base.strip(')')]  # Eliminar paréntesis
         imm = f"{int(offset):016b}"  # Offset como inmediato de 16 bits
-        return f"{opcode}{rs}{rt}{imm}"
+        instruccion = f"{opcode}{rs}{rt}{imm}"
+        return dividir_en_8_bits(instruccion)
 
     # Decodificación para branch (BEQ)
     elif operacion in operaciones_branch:
@@ -149,10 +153,15 @@ def ensambladorAbinario(instruccionEnsamblador):
         rs = registros[partes[1]]
         rt = registros[partes[2]]
         imm = f"{int(partes[3]):016b}"  # Inmediato de 16 bits (desplazamiento)
-        return f"{opcode}{rs}{rt}{imm}"
+        instruccion = f"{opcode}{rs}{rt}{imm}"
+        return dividir_en_8_bits(instruccion)
 
     # Si no es reconocida
     raise ValueError(f"Operación no reconocida: {operacion}")
+
+def dividir_en_8_bits(instruccion):
+    """Divide una instrucción de 32 bits en fragmentos de 8 bits."""
+    return '\n'.join([instruccion[i:i+8] for i in range(0, len(instruccion), 8)])
 
 
 
