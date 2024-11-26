@@ -74,7 +74,7 @@ initial begin
 	$readmemh("datos_BR.txt",BancoRegistros);
 	#10;
 end
- always @(posedge clk_BR) begin
+ always @(*)begin
         if (WE) begin
 			#100;
             BancoRegistros[DirEsc] = DatosEntrada;  // Escritura
@@ -608,7 +608,10 @@ Mux2_1 selNuevaDirInstruccionIMem(
 	.B(c_out_ex_mem[101:70]),
 	.C(dirNuevaInstruccion)
 );
-
+  
+  
+  
+  //clskm
 assign resultadoTotal=ALUoMDD_to_BR;
 
 endmodule
