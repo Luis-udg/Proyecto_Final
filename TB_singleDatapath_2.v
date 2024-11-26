@@ -139,6 +139,17 @@ initial begin
 	clk_TB=1;
 	#25;
 	
+	
+	clk_TB=0;
+	#25;
+	clk_TB=1;
+	#25;
+	clk_TB=0;
+	#25;
+	clk_TB=1;
+	#25;
+	
+	
 	$stop;
 end
 endmodule
